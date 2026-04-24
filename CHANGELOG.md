@@ -4,7 +4,51 @@ All notable changes to this Mac setup.
 
 ---
 
-## 2026-04-24 — The Infinity Gauntlet
+## 2026-04-24 (evening) — Layer v4 polish
+
+Same-day iteration on the Gauntlet after live-driving it for a couple hours. Several mnemonic + ergonomic refinements.
+
+### 🔄 Caps layer swap
+
+| Caps + | Was | Now |
+|---|---|---|
+| Q | Home | **Browser Back (⌘[)** |
+| E | End | **Browser Forward (⌘])** |
+| R | Browser Forward | **End** |
+| F | Browser Back | **Home** |
+
+**Rationale:** Q/E flank W as a horizontal pair → matches "back/forward" left/right semantic. F=Home is "home row → home position" mnemonic. Slight ergonomic downgrade for browser-back (most-used) was acceptable trade for cleaner mental model.
+
+### ➕ Caps+V = Paste without formatting (⌘⇧V)
+
+Mnemonic chain: ⌘V = paste, ⌘⇧V = paste-no-format, **Caps+V = paste-no-format one-handed**. Huge AI Orchestrator win — kills style pollution from Claude/ChatGPT into Gmail/Notion/Slack.
+
+### 🔄 Shottr move: Caps+V → Caps+X
+
+Freed Caps+V for paste-no-format. Shottr's Area screenshot hotkey changed to ⌃⇧⌘X. Caps+X now triggers annotated region capture.
+
+### 🔄 ~ layer reorg
+
+| ~ + | Was | Now |
+|---|---|---|
+| 3 | Close tab | **New tab (⌘T)** |
+| 4 | New tab | 🔓 Free (earn it) |
+| 5 | (free) | **Close tab (⌘W)** |
+
+**Rationale:** New (3) and Close (5) act as bookends with prev/next on 1/2. Close moved farther from tab-nav as "safety distance" for destructive action. ~+4 left empty per earn-your-features principle.
+
+### Final rule count: 6 Karabiner Complex Modifications
+
+1. Hyper Key: Caps Lock → ⌃⇧⌘
+2. Backtick (~) → Meh (⌃⌥⇧) when held, ` when tapped
+3. Left-hand nav layer v4 (10 manipulators)
+4. Meh (~) + 1/2/3/5 → Tab actions
+5. Caps + Z → Reopen closed tab (⌘⇧T)
+6. Caps + V → Paste without formatting (⌘⇧V)
+
+---
+
+## 2026-04-24 (afternoon) — The Infinity Gauntlet (initial build)
 
 Built a **two-layer left-hand keyboard system** for AI Orchestrator + Data Analyst workflow. Right hand never leaves the mouse. All navigation, capture, tab management, and window control happens via left hand.
 

@@ -26,15 +26,15 @@ Designed for AI Orchestrator + Data Analyst workflow. **Right hand never leaves 
 
 | Caps + | Action |
 |---|---|
-| **Q** | Home |
+| **Q** | Browser Back (⌘[) |
 | **W** | Page Up |
-| **E** | End |
-| **R** | Browser Forward (⌘]) |
+| **E** | Browser Forward (⌘]) |
+| **R** | End |
 | **T** | ↑ (up one line) |
 | **A** | ← |
 | **S** | Page Down |
 | **D** | → |
-| **F** | Browser Back (⌘[) |
+| **F** | Home |
 | **G** | ↓ (down one line) |
 
 **Capture + quick actions**
@@ -42,7 +42,8 @@ Designed for AI Orchestrator + Data Analyst workflow. **Right hand never leaves 
 | Caps + | Action |
 |---|---|
 | **C** | Full-screen screenshot → clipboard (native ⌃⇧⌘C) |
-| **V** | Shottr — region screenshot + annotations (highlight, text, draw) |
+| **V** | Paste without formatting (⌘⇧V) |
+| **X** | Shottr — region screenshot + annotations (highlight, text, draw) |
 | **Z** | Reopen closed tab (⌘⇧T) |
 
 **Window snap (Rectangle)**
@@ -59,15 +60,16 @@ Designed for AI Orchestrator + Data Analyst workflow. **Right hand never leaves 
 |---|---|
 | **1** | Previous tab |
 | **2** | Next tab |
-| **3** | Close tab |
-| **4** | New tab |
+| **3** | New tab |
+| **4** | 🔓 Free (earn it) |
+| **5** | Close tab |
 
 ### Open slots (design space)
 
 | Layer | Free keys |
 |---|---|
-| Caps | X · B · 4 · 5 · 6-0 |
-| ~ (Meh) | most letters · 5 · 6-0 |
+| Caps | B · 4 · 5 · 6-0 |
+| ~ (Meh) | most letters · 4 · 6-0 |
 
 ---
 
@@ -110,10 +112,10 @@ Shottr replaces macOS's native region screenshot with a proper annotation pipeli
 **Configuration:**
 1. Install from [shottr.cc](https://shottr.cc)
 2. Click "Run at Startup"
-3. Preferences → Hotkeys → set **Area screenshot** to **⌃⇧⌘V**
+3. Preferences → Hotkeys → set **Area screenshot** to **⌃⇧⌘X**
 4. Preferences → General → After capture → "Open Editor" (for annotation access)
 
-**Result:** Caps+V triggers Shottr. Drag region → toolbar appears → highlight, type, draw, blur. ⌘C copies annotated image. Paste into Claude/ChatGPT/Slack.
+**Result:** Caps+X triggers Shottr. Drag region → toolbar appears → highlight, type, draw, blur. ⌘C copies annotated image. Paste into Claude/ChatGPT/Slack.
 
 ---
 
@@ -123,7 +125,7 @@ Shottr replaces macOS's native region screenshot with a proper annotation pipeli
 | Hotkey | Action |
 |---|---|
 | `Caps+C` (⌃⇧⌘C) | Full screen → clipboard |
-| `Caps+V` (⌃⇧⌘V) | **Shottr — region + annotate** |
+| `Caps+X` (⌃⇧⌘X) | **Shottr — region + annotate** |
 | `Cmd+Shift+4` | Region → saves to Desktop (native) |
 | `Cmd+Shift+3` | Full screen → saves to Desktop (native) |
 
@@ -230,14 +232,17 @@ Maps held Caps Lock to the 3-modifier chord. Tap Caps Lock → Escape (if config
 ### Rule 2 — Backtick `~` → Meh (⌃⌥⇧) when held, `` ` `` when tapped
 Dual-function key. Preserves backtick typing, adds Layer 2 modifier.
 
-### Rule 3 — Left-hand nav layer v3 (QWASERF + TG + browser back/fwd)
-10 manipulators covering the full nav cluster: Home/End/PgUp/PgDn/←/↑/↓/→ plus browser back/forward.
+### Rule 3 — Left-hand nav layer v4 (Q/E=browser back/fwd, R/F=End/Home, T/G=arrows)
+10 manipulators. Q/E flank W as horizontal browser back/forward pair (semantic). R=End, F=Home (F=home row → home position mnemonic). T/G vertical pair = ↑/↓.
 
-### Rule 4 — Meh (~) + 1-4 → Tab actions
-Tab switching, close, new. Reopen closed tab moved to Caps+Z.
+### Rule 4 — Meh (~) + 1/2/3/5 → Tab actions
+Tab switching (1/2), new tab (3), close tab (5). ~+4 left intentionally free for future earn-it bindings.
 
 ### Rule 5 — Caps+Z → Reopen closed tab (⌘⇧T)
 Standalone rule. Works in Chrome, Firefox, Safari, VS Code, Terminal.
+
+### Rule 6 — Caps+V → Paste without formatting (⌘⇧V)
+Standalone rule. The mnemonic chain: ⌘V = paste, ⌘⇧V = paste-no-format, Caps+V = paste-no-format one-handed.
 
 **Rationale for 3-modifier Hyper (not 4):** Using ⌃⇧⌘ (no Option) + Meh ⌃⌥⇧ (no Cmd) = non-overlapping modifier sets. Both layers coexist without conflict. True 4-modifier Hyper would make Meh a subset of Hyper and break Layer 2.
 
@@ -247,9 +252,9 @@ Standalone rule. Works in Chrome, Firefox, Safari, VS Code, Terminal.
 
 ### The feedback loop (debugging with Claude)
 1. Error appears on screen
-2. `Caps+V` → Shottr region capture with annotations (highlight + arrow)
+2. `Caps+X` → Shottr region capture with annotations (highlight + arrow)
 3. `Caps+L` (Raycast hotkey) → open Claude app
-4. `Cmd+V` → paste annotated screenshot
+4. `Cmd+V` → paste annotated screenshot (or `Caps+V` if pasting plain text)
 5. Fix → paste in terminal → repeat
 
 ### Tab-swim workflow
