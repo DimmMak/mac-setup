@@ -4,6 +4,53 @@ All notable changes to this Mac setup.
 
 ---
 
+## 2026-04-25 — Voice dictation pipeline + macOS update
+
+Two-part session: macOS Sonoma security patch + replacing VoiceInk's $25 paywall with an owned whisper.cpp pipeline.
+
+### 🎤 Owned voice dictation (replaces VoiceInk)
+
+Built a free, OSS, future-proof push-to-talk dictation system. **Same Whisper engine** as VoiceInk / MacWhisper / Otter — owned, no trial, no recurring cost.
+
+Architecture:
+```
+Mouse5 → Karabiner (button5 → F19) → Hammerspoon (catches F19, runs script + auto-paste)
+       → ~/voice/scripts/dictate.sh → sox + whisper-cli → pbcopy → Cmd+V at cursor
+```
+
+**Stack added:**
+- `whisper-cpp` + `sox` via Homebrew
+- `Hammerspoon` (cask) — trigger layer with mic TCC scope (Karabiner can't request mic perm because its daemon lacks `NSMicrophoneUsageDescription`)
+- `ggml-large-v3-turbo.bin` (685 MB Whisper model, MIT licensed, OpenAI weights)
+- `~/voice/` directory tree — scripts, vocabulary biasing, append-only transcript log
+- `~/.hammerspoon/init.lua` — F19 hotkey + auto-paste via `hs.eventtap.keyStroke`
+
+**Karabiner rule added (rule #8):**
+- Voice dictation: Mouse button5 → F19 (Hammerspoon catches)
+
+**Repo:** [DimmMak/homebrew-dictation](https://github.com/DimmMak/homebrew-dictation) — full trials-and-errors documented in `JOURNEY.md`.
+
+**Cost replaced:** VoiceInk $25 + 7-day trial timer · Otter ~$20/mo · Rev $20+/mo · Dragon $15/mo · OpenAI Whisper API ~$50-150/mo for heavy use.
+
+### 📥 macOS Sonoma 14.2.1 → 14.8.5
+
+Minor patch via `softwareupdate --install`. APFS local snapshot taken for rollback (`com.apple.TimeMachine.2026-04-25-165909.local`, ~30-day window).
+
+**Hiccups logged for next time:**
+1. `softwareupdate --label` doesn't exist — label is positional argument
+2. zsh bracketed-paste glitch (`[200~` glob errors) — fixed by typing manually
+3. Terminal blocks restart — required Try Again dialog to force-quit Terminal
+
+### ❌ Removed
+
+- VoiceInk app + all `~/Library` data (zapped via `brew uninstall --cask --zap voiceink`)
+
+### 📁 New related repo
+
+- [DimmMak/homebrew-dictation](https://github.com/DimmMak/homebrew-dictation) — the voice pipeline + journey
+
+---
+
 ## 2026-04-24 (evening) — Layer v4 polish
 
 Same-day iteration on the Gauntlet after live-driving it for a couple hours. Several mnemonic + ergonomic refinements.
