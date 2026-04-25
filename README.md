@@ -302,6 +302,18 @@ Standalone rule. The mnemonic chain: ⌘V = paste, ⌘⇧V = paste-no-format, Ca
 - `raycast-snippets.json` — importable Raycast snippets
 - `.zshrc` — shell config
 
+## 🔗 Related repos
+
+| Repo | Role |
+|---|---|
+| [gauntlet](https://github.com/DimmMak/gauntlet) | `.gauntlet` SKILL — keyboard legend printout |
+| [ideas](https://github.com/DimmMak/ideas) | `.ideas` SKILL — thesis-tier capture vault with graph layer |
+| [ideas-journal](https://github.com/DimmMak/ideas-journal) | Personal thesis log + Howard-Marks-style memos |
+| [hooks](https://github.com/DimmMak/hooks) | Enforcement-layer SKILL |
+| [claude-memory](https://github.com/DimmMak/claude-memory) | Persistent memory layer for Claude conversations |
+- `raycast-snippets.json` — importable Raycast snippets
+- `.zshrc` — shell config
+
 ---
 
 ## 👤 Built By
