@@ -4,6 +4,47 @@ All notable changes to this Mac setup.
 
 ---
 
+## 2026-04-26 (early AM) — First live YouTube stream + homebrew-streaming repo
+
+Successfully shipped first live YouTube broadcast end-to-end:
+- OBS streaming live to YouTube (OAuth-connected, Apple Silicon h264_videotoolbox encoding)
+- Live whisper captions rendered on the broadcast (~5-7 sec lag, comparable to YT auto-captions)
+- All 4 OBS sources (Screen, Mic, System Audio, Live Captions) working
+- Caps+L Hammerspoon toggle confirmed working
+- Stream health: "Excellent" sustained for 10+ min of testing
+
+### 📁 New repo
+
+- [DimmMak/homebrew-streaming](https://github.com/DimmMak/homebrew-streaming) — full streaming kit (~/stream/) extracted into its own repo. Continues the homebrew-X pattern (3rd entry after dictation + live-captions).
+
+### Why separate repo (vs adding to mac-setup)
+
+mac-setup stays the OS-level config layer (Karabiner Boss Gauntlet, Hammerspoon hotkeys, Raycast snippets). homebrew-streaming is the application-layer streaming pipeline. Each repo tells one OSS-replaces-paid story. Viewers can clone whichever they need.
+
+### Lessons captured in JOURNEY.md (10 trials)
+
+- BlackHole-2ch install requires sudo (one-time manual step)
+- macOS Sonoma replaced "Display Capture" with "macOS Screen Capture" source type
+- OBS Virtual Camera extension not needed for streaming (skip the System Extension Blocked dialog)
+- Multi-Output Device activation lives in System Settings → Sound (not Audio MIDI Setup right-click)
+- OBS Browser source caches stale pages — must Refresh cache after HTML edits
+- YouTube OBS-created broadcasts are separate from "Default stream" config
+- Caption lag ~5-7 sec on broadcast (3-4 sec local + ~2 sec YT ingest) is acceptable
+- Bitrate 12 Mbps with 14 Mbps uplink → dropped frames climb. Drop to 8 Mbps for headroom.
+- Hammerspoon Caps+L false-alarm "start failed" when stopping (exit 143 = SIGTERM, not crash)
+- OBS Browser source pointing at local HTML = poor-man's index card / cheatsheet
+
+### Cost savings (combined fleet)
+
+| 🟣 Fleet repo | 🟣 Replaces | 🟣 Saves/yr |
+|---|---|---|
+| homebrew-dictation | VoiceInk + Otter | $260+/yr |
+| homebrew-live-captions | Rev Live + Streamtext | $360-1,800/yr |
+| homebrew-streaming | Streamlabs + Restream + Streamladder | $1,200+/yr |
+| **Total fleet** | | **~$1,800-3,200/yr** |
+
+---
+
 ## 2026-04-25 (late evening) — Always-on live captions
 
 Built `~/voice-stream/` (homebrew-live-captions) — third project in the homebrew-X series. Always-on streaming captions via whisper-stream + base.en model, ~3-4 sec latency, anti-fragile by design.
