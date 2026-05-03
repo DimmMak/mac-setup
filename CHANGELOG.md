@@ -4,6 +4,43 @@ All notable changes to this Mac setup.
 
 ---
 
+## 2026-05-03 — Zelotes F-18 vertical mouse Karabiner integration + UTM Windows uninstall
+
+Swapped from flat mouse to a Zelotes F-18 vertical mouse (ergonomic — neutral handshake forearm position). Wired its joystick + side button into the existing Karabiner + Hammerspoon stack, then reclaimed disk space by removing the Windows VM that had been sitting unused.
+
+### Karabiner: F-18 joystick → volume
+
+- New rule file: `~/.config/karabiner/assets/complex_modifications/f18-joystick.json`
+- Joystick UP fires `d`, DOWN fires `a` (firmware sends WASD scancodes, not analog HID)
+- Device-scoped via `device_if` to prevent keyboard D/A from also triggering volume:
+  - `13652 / 64009` — CX 2.4G wireless dongle (current connection path)
+  - `12815 / 8878` — F-18 BT5.0 Mouse
+  - `12815 / 8879` — F18 Wireless Receiver (Telink)
+- Mapped: `d → volume_increment`, `a → volume_decrement`
+
+### Whisper dictation carried over to F-18
+
+- Existing rule `mouse_button5 → F19 → Hammerspoon → ~/voice/scripts/dictate.sh` worked unchanged once the F-18 had Modify events enabled in Karabiner Settings → Devices
+
+### Lessons learned (documented to avoid re-burning)
+
+1. **"Modify events" toggle** in Karabiner Settings → Devices is the master switch. New devices are completely ignored until it's flipped on, per HID interface (multi-interface dongles need it on for every entry)
+2. **Asset file ≠ enabled rule.** Editing `assets/complex_modifications/*.json` after enabling does NOT update the live rule. Karabiner copies the rule into `karabiner.json` at enable-time and never re-reads the asset. Must delete the rule and re-add via "Add predefined rule" to import edits
+3. **Karabiner Settings panel and EventViewer can show different vendor IDs** for what looks like the same device — cross-check both
+4. **Generic CX chipset (vendor 13652)** is shared across cheap wireless gear. Initial joystick rule fired the wireless keyboard's D/A too — narrowed via the multi-ID device_if list
+
+### UTM Windows VM uninstall
+
+- Removed `/Applications/UTM.app` + `~/Library/Containers/com.utmapp.UTM` (20 GB VM disk image) + support files
+- Free space: **23 GB → 43 GB** (89% → 79% used)
+- `~/Library/Containers/` is SIP-protected — Terminal `rm` returns "Operation not permitted". Used `osascript -e 'tell application "Finder" to delete ...'` to move the container to Trash via Finder's permission
+
+### Files updated
+
+- `karabiner.json` — refreshed snapshot to reflect today's added F-18 rule
+
+---
+
 ## 2026-04-26 (early AM) — First live YouTube stream + homebrew-streaming repo
 
 Successfully shipped first live YouTube broadcast end-to-end:
