@@ -1,0 +1,44 @@
+{
+  "_comment": "Single source of truth for brand info displayed in lower-third overlay. Edit here, all OBS overlays update automatically.",
+  "_last_updated": "2026-04-26",
+
+  "handle": "@DimmMak",
+  "channel_url": "youtube.com/@Dimmak",
+  "github": "github.com/DimmMak",
+
+  "thesis": "OSS-heavy, future-proof, Factorio-brain Claude orchestrator who builds in public",
+
+  "current_focus": "Live whisper captions on stream — 100% OSS pipeline",
+
+  "featured_repos": [
+    {
+      "name": "homebrew-dictation",
+      "url": "github.com/DimmMak/homebrew-dictation",
+      "tagline": "Push-to-talk Whisper (replaces VoiceInk)"
+    },
+    {
+      "name": "homebrew-live-captions",
+      "url": "github.com/DimmMak/homebrew-live-captions",
+      "tagline": "Always-on Whisper captions for streaming"
+    },
+    {
+      "name": "homebrew-streaming",
+      "url": "github.com/DimmMak/homebrew-streaming",
+      "tagline": "OBS streaming kit (replaces Streamlabs Pro)"
+    },
+    {
+      "name": "mac-setup",
+      "url": "github.com/DimmMak/mac-setup",
+      "tagline": "Karabiner Boss Gauntlet + Hammerspoon hotkeys"
+    }
+  ],
+
+  "rotating_taglines": [
+    "OSS-purist Claude orchestrator",
+    "Building in public, every prompt clonable",
+    "$1,800/yr in subscriptions replaced with bash + Lua",
+    "Live whisper captions powered by my own pipeline",
+    "Factorio-brain meets Claude Code",
+    "First Claude Code streamer with live OSS captions"
+  ]
+}

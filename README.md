@@ -2,7 +2,7 @@
 
 A living document of my personal Mac setup — tools, hotkeys, automations, and workflows optimized for data analysis, AI orchestration, and productivity.
 
-> Last updated: April 24, 2026
+> Last updated: May 7, 2026
 > Continuously updated as the setup evolves.
 
 ---
@@ -96,6 +96,12 @@ Designed for AI Orchestrator + Data Analyst workflow. **Right hand never leaves 
 | **Shottr** | Screenshot with annotations (free CleanShot alternative) | [shottr.cc](https://shottr.cc) |
 | **Homebrew** | Mac package manager | [brew.sh](https://brew.sh) |
 | **GitHub CLI** | Push to GitHub from terminal | `brew install gh` |
+
+### Aliases
+
+| Alias | What it does | Defined in |
+|---|---|---|
+| `kickdisplay` | Force macOS to re-detect displays. Fixes stuck HDMI / DisplayPort connections without unplugging — CLI equivalent of holding Option + clicking "Detect Displays" in System Settings. Added 2026-05-07 after debugging an HDMI handshake issue (see CHANGELOG). | `~/.zshrc` |
 
 ### Coming soon
 - [ ] BetterTouchTool
@@ -302,7 +308,19 @@ Standalone rule. The mnemonic chain: ⌘V = paste, ⌘⇧V = paste-no-format, Ca
 - `raycast-snippets.json` — importable Raycast snippets
 - `.zshrc` — shell config
 
-## 🔗 Related repos
+## 📦 Subfolders (consolidated 2026-05-07)
+
+Previously-standalone repos that now live here as subdirectories. Single source of truth for the Mac setup.
+
+| Subfolder | Role |
+|---|---|
+| [homebrew-dictation/](homebrew-dictation) | Active voice-dictation pipeline — whisper.cpp + Hammerspoon + sox. Replaces VoiceInk's paywall |
+| [homebrew-streaming/](homebrew-streaming) | OBS + BlackHole + whisper-stream live captions kit |
+| [voiceink-setup/](voiceink-setup) | Historical — VoiceInk install (legacy, replaced by homebrew-dictation) |
+
+The standalone GitHub repos (`DimmMak/voiceink-setup`, `homebrew-dictation`, `homebrew-streaming`) remain as frozen snapshots; no new commits land there.
+
+## 🔗 Related repos (external — kept separate)
 
 | Repo | Role |
 |---|---|
@@ -311,8 +329,7 @@ Standalone rule. The mnemonic chain: ⌘V = paste, ⌘⇧V = paste-no-format, Ca
 | [ideas-journal](https://github.com/DimmMak/ideas-journal) | Personal thesis log + Howard-Marks-style memos |
 | [hooks](https://github.com/DimmMak/hooks) | Enforcement-layer SKILL |
 | [claude-memory](https://github.com/DimmMak/claude-memory) | Persistent memory layer for Claude conversations |
-- `raycast-snippets.json` — importable Raycast snippets
-- `.zshrc` — shell config
+| [update](https://github.com/DimmMak/update) | `.update` SKILL — OS update playbook (kept separate due to skill distribution model) |
 
 ---
 

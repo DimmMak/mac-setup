@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hotkey Legend — Stream Reference</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: -apple-system, "SF Pro Display", "Helvetica Neue", sans-serif;
+    color: #ffffff;
+    overflow: hidden;
+  }
+
+  #legend {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(20, 20, 30, 0.85);
+    backdrop-filter: blur(8px);
+    border-left: 4px solid #facc15;
+    border-radius: 8px;
+    padding: 12px 16px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+    min-width: 280px;
+    max-width: 360px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #facc15;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+
+  .count {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    font-family: "SF Mono", Monaco, monospace;
+  }
+
+  .category {
+    margin-top: 8px;
+    margin-bottom: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+  .category:first-of-type { margin-top: 0; }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 3px 0;
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  .keys {
+    flex-shrink: 0;
+    min-width: 78px;
+    padding: 2px 7px;
+    background: rgba(250, 204, 21, 0.15);
+    border: 1px solid rgba(250, 204, 21, 0.35);
+    border-radius: 4px;
+    font-family: "SF Mono", Monaco, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: #facc15;
+    text-align: center;
+  }
+
+  .label {
+    color: #ffffff;
+    font-weight: 400;
+  }
+
+  .footer {
+    margin-top: 10px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 10px;
+    color: rgba(255,255,255,0.35);
+    font-family: "SF Mono", Monaco, monospace;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* New entry pulse — fires when JSON adds a row */
+  @keyframes pulse-new {
+    0% { background: rgba(74, 222, 128, 0.35); }
+    100% { background: rgba(250, 204, 21, 0.15); }
+  }
+  .row.new .keys { animation: pulse-new 2s ease-out; }
+
+  .loading { color: rgba(255,255,255,0.3); }
+  .error {
+    color: #f87171;
+    font-size: 11px;
+    padding: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div id="legend">
+  <div class="header">
+    <span class="title">⌨️ Hotkeys</span>
+    <span id="count" class="count">—</span>
+  </div>
+  <div id="rows" class="loading">Loading hotkeys.json…</div>
+  <div class="footer">
+    <span id="version">v—</span>
+    <span id="last-updated">—</span>
+  </div>
+</div>
+
+<script>
+/*
+ * Hotkey legend overlay reads from ~/stream/data/hotkeys.json.
+ * Polls every 5 seconds — add an entry to the JSON, see it appear live.
+ *
+ * To use in OBS:
+ *   1. Add Browser source → Local file → /Users/danny/stream/obs/browser-sources/hotkey-legend.html
+ *   2. Width 400, Height 600 (auto-fits content)
+ *   3. Position top-right of canvas
+ *   4. Bind a hotkey to toggle this source's visibility (e.g. Caps+H → F14)
+ */
+
+// Served by captions-server.sh on :8765. Use relative URL so this works whether
+// loaded as http://localhost:8765/hotkey-legend or via direct file:// (which
+// would only work without the JSON refresh — file:// fetch is blocked by CORS).
+const HOTKEYS_JSON_URL = '/hotkeys.json';
+const POLL_INTERVAL_MS = 5000;
+
+let lastSignature = '';
+
+async function loadHotkeys() {
+  try {
+    // Cache-bust so we always get the latest disk state
+    const res = await fetch(HOTKEYS_JSON_URL + '?t=' + Date.now());
+    const data = await res.json();
+    const hotkeys = data.hotkeys || [];
+
+    // Compute a signature so we only re-render on actual change
+    const signature = JSON.stringify(hotkeys);
+    if (signature === lastSignature) {
+      updateTimestamp();
+      return;
+    }
+
+    // Detect newly added entries (by keys+label) for the pulse animation
+    const previousKeys = new Set();
+    if (lastSignature) {
+      try {
+        JSON.parse(lastSignature).forEach(h => previousKeys.add(h.keys + '|' + h.label));
+      } catch {}
+    }
+    lastSignature = signature;
+
+    // Group by category, preserving JSON order
+    const groups = {};
+    const groupOrder = [];
+    hotkeys.forEach(h => {
+      const cat = h.category || 'misc';
+      if (!groups[cat]) { groups[cat] = []; groupOrder.push(cat); }
+      groups[cat].push(h);
+    });
+
+    const rowsContainer = document.getElementById('rows');
+    rowsContainer.classList.remove('loading');
+    rowsContainer.innerHTML = '';
+
+    groupOrder.forEach(cat => {
+      const catHeader = document.createElement('div');
+      catHeader.className = 'category';
+      catHeader.textContent = cat;
+      rowsContainer.appendChild(catHeader);
+
+      groups[cat].forEach(h => {
+        const row = document.createElement('div');
+        row.className = 'row';
+        const isNew = previousKeys.size > 0 && !previousKeys.has(h.keys + '|' + h.label);
+        if (isNew) row.classList.add('new');
+
+        const keys = document.createElement('span');
+        keys.className = 'keys';
+        keys.textContent = h.keys;
+
+        const label = document.createElement('span');
+        label.className = 'label';
+        label.textContent = h.label;
+
+        row.appendChild(keys);
+        row.appendChild(label);
+        rowsContainer.appendChild(row);
+      });
+    });
+
+    document.getElementById('count').textContent = hotkeys.length + ' bound';
+    document.getElementById('version').textContent = 'v' + (data.version || '?');
+    updateTimestamp();
+  } catch (e) {
+    document.getElementById('rows').innerHTML =
+      '<div class="error">⚠️ Failed to load hotkeys.json<br>' + e.message + '</div>';
+  }
+}
+
+function updateTimestamp() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  document.getElementById('last-updated').textContent = hh + ':' + mm + ':' + ss;
+}
+
+loadHotkeys();
+setInterval(loadHotkeys, POLL_INTERVAL_MS);
+</script>
+
+</body>
+</html>

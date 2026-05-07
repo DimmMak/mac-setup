@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lower Third — Brand Overlay</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: -apple-system, "SF Pro Display", "Helvetica Neue", sans-serif;
+    color: #ffffff;
+    overflow: hidden;
+  }
+
+  #lower-third {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    background: rgba(20, 20, 30, 0.88);
+    backdrop-filter: blur(8px);
+    border-left: 4px solid #4ade80;
+    border-radius: 8px;
+    padding: 14px 22px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+    min-width: 380px;
+    max-width: 600px;
+  }
+
+  .handle-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .handle {
+    font-size: 22px;
+    font-weight: 700;
+    color: #4ade80;
+    letter-spacing: 0.5px;
+  }
+
+  .pipe {
+    color: rgba(255,255,255,0.3);
+    font-size: 18px;
+  }
+
+  .channel {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+  }
+
+  .focus {
+    font-size: 16px;
+    color: #ffffff;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+
+  .tagline {
+    font-size: 13px;
+    color: #facc15;
+    font-style: italic;
+    margin-top: 4px;
+    transition: opacity 0.6s ease;
+  }
+
+  .repo-strip {
+    margin-top: 10px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 8px;
+    font-family: "SF Mono", Monaco, monospace;
+  }
+
+  .repo-strip .label {
+    color: rgba(255,255,255,0.4);
+    margin-right: 6px;
+  }
+
+  /* Loading state */
+  .loading { color: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+
+<div id="lower-third">
+  <div class="handle-row">
+    <span id="handle" class="handle loading">@loading</span>
+    <span class="pipe">|</span>
+    <span id="channel" class="channel">—</span>
+  </div>
+  <div id="focus" class="focus">—</div>
+  <div id="tagline" class="tagline">—</div>
+  <div class="repo-strip">
+    <span class="label">repos:</span>
+    <span id="repos">—</span>
+  </div>
+</div>
+
+<script>
+/*
+ * Lower-third overlay reads from ~/stream/data/brand.json (served via captions-server.sh
+ * or any local HTTP server). Single source of truth — edit the JSON, lower third updates.
+ *
+ * Rotates the tagline every 8 seconds for visual variety without distracting from content.
+ *
+ * To use in OBS:
+ *   1. Add Browser source → Local file → /Users/danny/stream/obs/browser-sources/lower-third.html
+ *   2. OR serve via http://localhost:8765/lower-third (if you extend captions-server.sh)
+ *   3. Width 700, Height 220
+ *   4. Position bottom-left of canvas
+ */
+
+const BRAND_JSON_URL = 'file:///Users/danny/stream/data/brand.json';
+
+let taglineIndex = 0;
+let taglines = [];
+
+async function loadBrand() {
+  try {
+    // For OBS Browser source: file:// works. For dev testing in regular browser, you'd need a local server.
+    const res = await fetch(BRAND_JSON_URL);
+    const data = await res.json();
+
+    document.getElementById('handle').textContent = data.handle;
+    document.getElementById('handle').classList.remove('loading');
+    document.getElementById('channel').textContent = data.channel_url;
+    document.getElementById('focus').textContent = data.current_focus;
+
+    taglines = data.rotating_taglines || [data.thesis];
+    rotateTagline();
+
+    // Show featured repos as a strip
+    const repoNames = data.featured_repos.map(r => r.name).join(' · ');
+    document.getElementById('repos').textContent = repoNames;
+  } catch (e) {
+    document.getElementById('handle').textContent = '@DimmMak';
+    document.getElementById('focus').textContent = 'Brand JSON failed to load';
+    document.getElementById('tagline').textContent = e.message;
+  }
+}
+
+function rotateTagline() {
+  if (taglines.length === 0) return;
+  const el = document.getElementById('tagline');
+  el.style.opacity = 0;
+  setTimeout(() => {
+    el.textContent = taglines[taglineIndex];
+    taglineIndex = (taglineIndex + 1) % taglines.length;
+    el.style.opacity = 1;
+  }, 600);
+}
+
+loadBrand();
+setInterval(rotateTagline, 8000);
+// Reload brand.json every 60 sec so live edits propagate without OBS refresh
+setInterval(loadBrand, 60000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mech Cockpit — Preview Mockup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 100vw; height: 100vh; overflow: hidden;
+    background: #000; color: #fff;
+    font-family: -apple-system, "SF Pro Display", sans-serif;
+  }
+
+  #scene { position: fixed; inset: 0; overflow: hidden; }
+
+  /* ════════════════ LAYER 1 — SCROLLING BACKDROP ════════════════ */
+  #backdrop {
+    position: absolute; inset: 0;
+    background-size: 200% 100%;
+    animation: scroll 30s linear infinite;
+    transition: filter 0.6s ease, background 0.6s ease;
+    z-index: 1;
+  }
+  @keyframes scroll {
+    from { background-position: 0% 50%; }
+    to   { background-position: -200% 50%; }
+  }
+
+  /* 4 backdrop themes — pure CSS gradients with silhouette overlay */
+  .bd-neo-tokyo {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 80%, rgba(255,0,110,0.4), transparent),
+      linear-gradient(180deg, #0a0014 0%, #1a0033 30%, #5a0066 60%, #ff006e 90%, #ffaa00 100%);
+  }
+  .bd-neo-tokyo::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
+    background-size: 50% 100%;
+    background-image:
+      linear-gradient(0deg, #000 0%, transparent 100%),
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="none"><g fill="%23000"><rect x="0" y="200" width="80" height="200"/><rect x="90" y="120" width="60" height="280"/><rect x="160" y="240" width="40" height="160"/><rect x="210" y="80" width="70" height="320"/><rect x="290" y="180" width="50" height="220"/><rect x="350" y="140" width="60" height="260"/><rect x="420" y="220" width="50" height="180"/><rect x="480" y="100" width="80" height="300"/><rect x="570" y="200" width="40" height="200"/><rect x="620" y="160" width="70" height="240"/><rect x="700" y="220" width="50" height="180"/><rect x="760" y="140" width="40" height="260"/></g><g fill="%23ff006e" opacity="0.8"><rect x="100" y="160" width="6" height="6"/><rect x="220" y="120" width="6" height="6"/><rect x="360" y="180" width="6" height="6"/><rect x="500" y="140" width="6" height="6"/><rect x="630" y="200" width="6" height="6"/></g></svg>');
+  }
+  .bd-mountains {
+    background:
+      radial-gradient(ellipse 60% 40% at 70% 30%, rgba(255,255,255,0.2), transparent),
+      linear-gradient(180deg, #0a1428 0%, #1f3a5f 40%, #5a7ca8 70%, #c4d8e8 100%);
+  }
+  .bd-mountains::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
+    background-size: 50% 100%;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="none"><polygon points="0,400 0,250 100,150 180,220 280,80 400,180 520,100 640,200 760,140 800,180 800,400" fill="%23001020" opacity="0.9"/><polygon points="0,400 50,300 150,220 280,260 400,200 540,260 700,220 800,280 800,400" fill="%23002040" opacity="0.95"/></svg>');
+  }
+  .bd-ocean {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(0,200,255,0.3), transparent),
+      linear-gradient(180deg, #ff8800 0%, #ff4477 30%, #aa3399 60%, #003355 100%);
+  }
+  .bd-ocean::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 30%;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,40,80,0.6) 100%);
+  }
+  .bd-desert {
+    background:
+      radial-gradient(circle at 70% 30%, rgba(255,200,100,0.4), transparent 60%),
+      linear-gradient(180deg, #ffd88a 0%, #ff9944 40%, #cc4400 70%, #441100 100%);
+  }
+  .bd-desert::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
+    background-size: 50% 100%;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="none"><path d="M0,400 Q200,260 400,310 T800,290 L800,400 Z" fill="%23882200" opacity="0.7"/><path d="M0,400 Q150,330 350,360 T800,340 L800,400 Z" fill="%23441100" opacity="0.9"/></svg>');
+  }
+
+  /* ════════════════ LAYER 2 — COCKPIT FRAME (state-dependent) ════════════════ */
+  #cockpit-layer {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  .placeholder-mech {
+    position: absolute;
+    border: 3px dashed rgba(255,170,0,0.6);
+    background: rgba(20,20,30,0.55);
+    backdrop-filter: blur(2px);
+    color: rgba(255,170,0,0.9);
+    font-family: "SF Mono", monospace;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* OPEN state — frame around cockpit window with pilot in center */
+  .state-open .placeholder-mech.frame-top    { top: 0; left: 0; right: 0; height: 18%; }
+  .state-open .placeholder-mech.frame-left   { top: 18%; left: 0; width: 22%; bottom: 18%; }
+  .state-open .placeholder-mech.frame-right  { top: 18%; right: 0; width: 22%; bottom: 18%; }
+  .state-open .placeholder-mech.frame-bottom { bottom: 0; left: 0; right: 0; height: 18%; }
+  .state-open .placeholder-mech.dashboard {
+    position: absolute; bottom: 18%; left: 22%; right: 22%; height: 14%;
+    background: rgba(40,30,15,0.85);
+    border: 2px solid rgba(255,170,0,0.4);
+    border-bottom: none;
+    display: flex; align-items: center; justify-content: space-around;
+    color: rgba(255,170,0,0.9); font-size: 11px;
+    padding: 0 12px;
+    z-index: 4;
+  }
+  .state-open .placeholder-mech.dashboard .dash-screen {
+    background: rgba(255,170,0,0.15);
+    border: 1px solid rgba(255,170,0,0.4);
+    padding: 4px 10px; border-radius: 3px;
+  }
+  .state-open .placeholder-mech.pilot {
+    position: absolute; top: 32%; left: 38%; width: 24%; height: 36%;
+    border-color: rgba(255,0,170,0.7);
+    color: rgba(255,0,170,0.9);
+    background: rgba(20,5,30,0.7);
+    border-radius: 50% 50% 5% 5%;
+    z-index: 4;
+  }
+
+  /* CLOSED state — solid mech with glowing visor */
+  .state-closed .placeholder-mech.body {
+    inset: 8% 18% 8% 18%;
+    border: 4px solid rgba(255,170,0,0.6);
+    background:
+      radial-gradient(circle at 50% 30%, rgba(255,140,0,0.4), transparent 40%),
+      linear-gradient(180deg, #1a1a1f 0%, #2a2a30 50%, #0a0a14 100%);
+    border-radius: 24px 24px 8px 8px;
+  }
+  .state-closed .placeholder-mech.visor {
+    position: absolute; top: 22%; left: 30%; right: 30%; height: 4%;
+    background: linear-gradient(90deg,
+      transparent, rgba(255,170,0,0.95), rgba(255,255,200,1), rgba(255,170,0,0.95), transparent);
+    box-shadow:
+      0 0 30px rgba(255,170,0,0.9),
+      0 0 60px rgba(255,140,0,0.6);
+    border-radius: 3px;
+    z-index: 4;
+    animation: pulse-visor 2s ease-in-out infinite;
+  }
+  @keyframes pulse-visor {
+    50% { opacity: 0.7; }
+  }
+
+  /* POV state — dashboard fills frame, small window in center */
+  .state-pov .placeholder-mech.dash-pov {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 50% 50%, transparent 18%, rgba(20,20,30,0.85) 30%),
+      repeating-linear-gradient(45deg, #1a1a22 0px, #1a1a22 4px, #20202a 4px, #20202a 8px);
+    border: none;
+    z-index: 2;
+  }
+  .state-pov .placeholder-mech.dash-pov::before {
+    content: 'COCKPIT INTERIOR (POV) — placeholder';
+    position: absolute; top: 8px; left: 12px;
+    color: rgba(255,170,0,0.7); font-size: 11px;
+  }
+  /* Dashboard panels around the center window */
+  .state-pov .pov-panel {
+    position: absolute;
+    background: rgba(40,30,15,0.9);
+    border: 1px solid rgba(255,170,0,0.5);
+    color: rgba(255,170,0,0.9);
+    font-family: "SF Mono", monospace;
+    font-size: 10px;
+    padding: 8px;
+    z-index: 3;
+  }
+
+  /* ════════════════ LAYER 3 — CENTER WINDOW (shows backdrop in POV mode) ════════════════ */
+  #pov-window {
+    position: absolute; top: 30%; left: 30%; width: 40%; height: 40%;
+    border: 3px solid rgba(255,170,0,0.8);
+    box-shadow: inset 0 0 40px rgba(255,140,0,0.3);
+    z-index: 2;
+    display: none;
+    border-radius: 50%;
+  }
+  body.state-pov #pov-window { display: block; }
+
+  /* ════════════════ LAYER 4 — HUD OVERLAY ════════════════ */
+  #hud {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    font-family: "SF Mono", monospace;
+    color: rgba(255,170,0,0.9);
+    text-shadow: 0 0 8px rgba(255,140,0,0.6);
+  }
+  .hud-corner {
+    position: absolute;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+  .hud-tl { top: 16px; left: 16px; }
+  .hud-tr { top: 16px; right: 16px; text-align: right; }
+  .hud-bl { bottom: 16px; left: 16px; }
+  .hud-br { bottom: 16px; right: 16px; text-align: right; }
+  .hud-bc {
+    bottom: 16px; left: 50%; transform: translateX(-50%);
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: rgba(20,20,30,0.7);
+    padding: 6px 16px;
+    border: 1px solid rgba(255,170,0,0.5);
+    border-radius: 3px;
+  }
+  .hud-label { color: rgba(255,170,0,0.5); margin-right: 6px; }
+  .hud-value { font-weight: 600; }
+
+  /* ════════════════ LAYER 5 — STATE INDICATOR + HELP ════════════════ */
+  #state-indicator {
+    position: absolute; top: 50%; left: 16px; transform: translateY(-50%);
+    background: rgba(20,20,30,0.85);
+    border-left: 3px solid rgba(255,0,170,1);
+    padding: 12px 16px;
+    z-index: 10;
+    font-family: "SF Mono", monospace;
+    font-size: 11px;
+    color: #fff;
+  }
+  #state-indicator .label { color: rgba(255,255,255,0.4); }
+  #state-indicator .val { color: rgba(255,0,170,1); font-weight: 700; }
+  #help {
+    position: absolute; bottom: 16px; right: 16px;
+    background: rgba(20,20,30,0.85);
+    padding: 10px 14px;
+    z-index: 10;
+    font-family: "SF Mono", monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.6;
+    border-left: 3px solid rgba(0,200,255,0.7);
+  }
+  #help .key {
+    background: rgba(0,200,255,0.2);
+    border: 1px solid rgba(0,200,255,0.5);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: #fff;
+  }
+
+  /* State transition fade */
+  .placeholder-mech, #pov-window, #scrolling-bg {
+    transition: opacity 0.6s ease;
+  }
+  body.transitioning .placeholder-mech { opacity: 0.3; }
+</style>
+</head>
+<body class="state-open bd-neo-tokyo">
+
+<div id="scene">
+  <div id="backdrop" class="bd-neo-tokyo"></div>
+
+  <div id="cockpit-layer">
+    <!-- OPEN state placeholders -->
+    <div class="placeholder-mech frame-top">MECH FRAME — TOP (chest plate opened)</div>
+    <div class="placeholder-mech frame-left">MECH FRAME — LEFT</div>
+    <div class="placeholder-mech frame-right">MECH FRAME — RIGHT</div>
+    <div class="placeholder-mech frame-bottom">MECH FRAME — BOTTOM (legs)</div>
+    <div class="placeholder-mech pilot">YOU<br>(webcam<br>+ bg removal)</div>
+    <div class="placeholder-mech dashboard">
+      <div class="dash-screen">RADAR</div>
+      <div class="dash-screen">⊕ COMPASS · 087°</div>
+      <div class="dash-screen">FUEL 87% · TEMP OK</div>
+    </div>
+
+    <!-- CLOSED state placeholders -->
+    <div class="placeholder-mech body">MECH SEALED — FIGHTER MODE<br>(placeholder for closed-state image)</div>
+    <div class="placeholder-mech visor"></div>
+
+    <!-- POV state placeholders -->
+    <div class="placeholder-mech dash-pov"></div>
+    <div class="pov-panel" style="top:10%; left:5%; width:18%; height:30%;">PRIMARY · NAV<br>━━━<br>HDG 087°<br>SPD 240kts<br>ALT 12,450ft</div>
+    <div class="pov-panel" style="top:10%; right:5%; width:18%; height:30%;">SYSTEMS<br>━━━<br>FUEL 87%<br>TEMP OK<br>HULL 100%</div>
+    <div class="pov-panel" style="bottom:10%; left:5%; width:18%; height:30%;">RADAR · CONTACTS<br>━━━<br>0 hostile<br>0 neutral</div>
+    <div class="pov-panel" style="bottom:10%; right:5%; width:18%; height:30%;">TARGETING<br>━━━<br>NO TARGET<br>WEAPONS COLD</div>
+  </div>
+
+  <div id="pov-window"></div>
+
+  <div id="hud">
+    <div class="hud-corner hud-tl">
+      <span class="hud-label">ALT</span><span class="hud-value" id="alt">12,450ft</span>
+    </div>
+    <div class="hud-corner hud-tr">
+      <span class="hud-label">HDG</span><span class="hud-value" id="hdg">087°</span>
+      <span class="hud-label" style="margin-left:12px">SPD</span><span class="hud-value" id="spd">240kts</span>
+    </div>
+    <div class="hud-bc">BHC-001</div>
+  </div>
+
+  <div id="state-indicator">
+    <div><span class="label">STATE:</span> <span class="val" id="state-val">OPEN</span></div>
+    <div><span class="label">BACKDROP:</span> <span class="val" id="bd-val">Neo-Tokyo</span></div>
+  </div>
+
+  <div id="help">
+    State: <span class="key">1</span> open · <span class="key">2</span> closed · <span class="key">3</span> POV<br>
+    Backdrop: <span class="key">Q</span> Neo-Tokyo · <span class="key">W</span> mountains · <span class="key">E</span> ocean · <span class="key">R</span> desert
+  </div>
+</div>
+
+<script>
+const STATES = {
+  '1': { cls: 'state-open',   name: 'OPEN' },
+  '2': { cls: 'state-closed', name: 'CLOSED · FIGHTER MODE' },
+  '3': { cls: 'state-pov',    name: 'INTERIOR POV' }
+};
+const BACKDROPS = {
+  'q': { cls: 'bd-neo-tokyo', name: 'Neo-Tokyo' },
+  'w': { cls: 'bd-mountains', name: 'Mountain Pass' },
+  'e': { cls: 'bd-ocean',     name: 'Ocean at Dusk' },
+  'r': { cls: 'bd-desert',    name: 'Desert Waste' }
+};
+
+document.addEventListener('keydown', (e) => {
+  const k = e.key.toLowerCase();
+  if (STATES[k]) {
+    document.body.classList.remove('state-open','state-closed','state-pov');
+    document.body.classList.add(STATES[k].cls);
+    document.body.classList.add('transitioning');
+    setTimeout(() => document.body.classList.remove('transitioning'), 600);
+    document.getElementById('state-val').textContent = STATES[k].name;
+  }
+  if (BACKDROPS[k]) {
+    const bd = document.getElementById('backdrop');
+    document.body.classList.remove('bd-neo-tokyo','bd-mountains','bd-ocean','bd-desert');
+    bd.classList.remove('bd-neo-tokyo','bd-mountains','bd-ocean','bd-desert');
+    document.body.classList.add(BACKDROPS[k].cls);
+    bd.classList.add(BACKDROPS[k].cls);
+    document.getElementById('bd-val').textContent = BACKDROPS[k].name;
+  }
+});
+
+// Tick HUD numbers slightly so it feels alive
+let altBase = 12450, hdgBase = 87, spdBase = 240;
+setInterval(() => {
+  altBase += Math.round((Math.random() - 0.5) * 30);
+  hdgBase = (hdgBase + Math.round((Math.random() - 0.5) * 2) + 360) % 360;
+  spdBase += Math.round((Math.random() - 0.5) * 6);
+  document.getElementById('alt').textContent = altBase.toLocaleString() + 'ft';
+  document.getElementById('hdg').textContent = String(hdgBase).padStart(3,'0') + '°';
+  document.getElementById('spd').textContent = spdBase + 'kts';
+}, 1500);
+</script>
+
+</body>
+</html>

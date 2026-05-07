@@ -1,0 +1,21 @@
+# Personal logs — your data, not for sharing
+logs/*.log
+logs/*.jsonl
+
+# Post-stream compounding output (generated per stream)
+post/
+
+# Extracted clips (generated per stream)
+clips/
+
+# OBS recording artifacts (if any leak in)
+*.mkv
+*.mp4
+*.flv
+
+# Temp files
+*.wav
+*.pid
+
+# macOS noise
+.DS_Store

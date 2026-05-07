@@ -1,0 +1,6 @@
+{
+  "_comment": "Hammerspoon-managed. Caps+J/K/L/; size, Caps+D/V mode, Caps+1/2 view.",
+  "size": "small",
+  "mode": "decorative",
+  "view": "wide"
+}

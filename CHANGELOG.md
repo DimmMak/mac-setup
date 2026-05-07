@@ -4,6 +4,59 @@ All notable changes to this Mac setup.
 
 ---
 
+## 2026-05-07 — Consolidation + HDMI debug + kickdisplay alias
+
+Folded the standalone `homebrew-*` and `voiceink-setup` repos into `mac-setup/` as subfolders. Single source of truth for everything Mac-related now lives in this repo. Also debugged a stuck HDMI connection and shipped a one-word fix.
+
+### 🩹 HDMI not detected → kickdisplay alias
+
+**The bug:** plugged HDMI adapter into MacBook Air M1, monitor stayed dark. Both USB-C ports reported `Status: No device connected` via `system_profiler SPThunderboltDataType` even after re-seating.
+
+**The fix path:**
+
+1. Polled `ioreg -p IOUSB -l` every 2 sec → confirmed adapter wasn't registering at the USB layer initially
+2. Re-seated → adapter registered as `USB BillBoard` + `GenesysLogic USB2.1 Hub` (USB BillBoard = the device class USB-C → HDMI adapters use for DisplayPort Alt Mode disclosure)
+3. Adapter recognized but no display attached → ran `system_profiler SPDisplaysDataType` → forced macOS to re-enumerate displays → monitor came up
+
+**The permanent fix:** added alias to `~/.zshrc`:
+
+```bash
+alias kickdisplay='system_profiler SPDisplaysDataType > /dev/null && echo "✅ display re-detected"'
+```
+
+Now: type `kickdisplay` in any terminal whenever the monitor sticks. CLI equivalent of holding Option + clicking "Detect Displays" in System Settings.
+
+### 📦 Repo consolidation
+
+Three previously-standalone GitHub repos became subfolders here:
+
+| Old repo (frozen on GitHub) | New location |
+|---|---|
+| `DimmMak/voiceink-setup` | `voiceink-setup/` (legacy — replaced by homebrew-dictation) |
+| `DimmMak/homebrew-dictation` | `homebrew-dictation/` (active dictation engine) |
+| `DimmMak/homebrew-streaming` | `homebrew-streaming/` (OBS + live captions kit) |
+
+**Why consolidate:** poly-repo earns its weight for skill repos (each is a discrete agent with users). Setup repos are personal infrastructure — hyperlinks between sibling repos rot, multiple CHANGELOGs splinter the timeline, "which repo did I document that fix in?" becomes a real question. Single repo + subfolders = one source of truth.
+
+The standalone GitHub repos remain as frozen snapshots for history; no new commits land there.
+
+### Lessons learned
+
+1. **`system_profiler SPDisplaysDataType` is a CLI display-kick** — querying display info forces macOS to re-poll GPU + USB-C controllers, which can complete a stuck DP-Alt-Mode handshake. Faster than holding Option in System Settings.
+2. **USB BillBoard is a real USB device class** — when a USB-C → HDMI adapter is recognized but display isn't binding, look for BillBoard + Hub in `ioreg`. If those are present, the failure is downstream (cable, monitor input source, or stuck handshake).
+3. **Bracketed paste mode artifact** — pasting commands from chat into Terminal can leave a stray `[` prefix (escape sequence remnant). Type commands manually to verify aliases.
+4. **Personal-setup poly-repo is the wrong default** — different design pressure than skill repos. Consolidate.
+
+### Files updated
+
+- `CHANGELOG.md` — this entry
+- `README.md` — added `kickdisplay` to Tools section, added Subfolders map, kept Related repos for truly-external skills
+- `voiceink-setup/` — moved in (was top-level repo)
+- `homebrew-dictation/` — cloned in
+- `homebrew-streaming/` — cloned in
+
+---
+
 ## 2026-05-03 — Zelotes F-18 vertical mouse Karabiner integration + UTM Windows uninstall
 
 Swapped from flat mouse to a Zelotes F-18 vertical mouse (ergonomic — neutral handshake forearm position). Wired its joystick + side button into the existing Karabiner + Hammerspoon stack, then reclaimed disk space by removing the Windows VM that had been sitting unused.

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OBS Notes — Index Card</title>
+<style>
+  /* Transparent so it overlays cleanly. Toggle source visibility via eye icon to hide from viewers. */
+  body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: -apple-system, "SF Pro Display", "Helvetica Neue", sans-serif;
+    color: #ffffff;
+    overflow: hidden;
+  }
+
+  .card {
+    background: rgba(20, 20, 30, 0.92);
+    border-radius: 16px;
+    padding: 20px 28px;
+    margin: 20px;
+    width: 480px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    border: 2px solid rgba(255,255,255,0.1);
+  }
+
+  h1 {
+    font-size: 22px;
+    margin: 0 0 12px 0;
+    color: #4ade80;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  h2 {
+    font-size: 16px;
+    margin: 16px 0 8px 0;
+    color: #facc15;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    padding-bottom: 4px;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style: none;
+  }
+
+  li {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+
+  .key {
+    display: inline-block;
+    background: rgba(74, 222, 128, 0.2);
+    border: 1px solid rgba(74, 222, 128, 0.4);
+    color: #4ade80;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: "SF Mono", Monaco, monospace;
+    font-size: 13px;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+
+  .urgent .key {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+  }
+
+  .footer {
+    margin-top: 14px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>🎬 PRE-STREAM CHECKLIST</h1>
+
+  <h2>📋 Before Going Live</h2>
+  <ul>
+    <li class="urgent"><span class="key">Caps+B</span> Stream-safe + captions ON</li>
+    <li><span class="key">Caps+L</span> Live captions toggle (if separate)</li>
+    <li>OBS → Start Streaming</li>
+    <li>YouTube Studio → Visibility: Unlisted (or Public)</li>
+  </ul>
+
+  <h2>🎮 During Stream</h2>
+  <ul>
+    <li><span class="key">Caps+M</span> Mark moment (clip target)</li>
+    <li><span class="key">Mouse5</span> Voice dictation (paste)</li>
+    <li>Watch caption status indicator (top-right of canvas)</li>
+  </ul>
+
+  <h2>🛑 End of Stream</h2>
+  <ul>
+    <li>OBS → Stop Streaming</li>
+    <li><span class="key">Caps+N</span> Normal mode (revert)</li>
+    <li>YouTube Studio → end broadcast</li>
+    <li>Run <code>~/stream/scripts/clip-extract.sh</code> on VOD</li>
+  </ul>
+
+  <div class="footer">
+    Edit me: ~/stream/obs/browser-sources/notes.html<br>
+    Toggle visibility with the eye icon in OBS Sources panel.
+  </div>
+</div>
+
+</body>
+</html>

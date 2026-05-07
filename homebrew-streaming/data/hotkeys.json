@@ -1,0 +1,86 @@
+{
+  "version": "0.4",
+  "_comment": "Single source of truth for all stream hotkeys. Edits propagate to the OBS hotkey-legend overlay within ~5 sec. Add new entries by appending to the 'hotkeys' array \u2014 keep it sorted by category.",
+  "hotkeys": [
+    {
+      "keys": "Caps+B",
+      "label": "Broadcast \u2014 stream-safe mode ON",
+      "category": "stream"
+    },
+    {
+      "keys": "Caps+N",
+      "label": "Normal \u2014 revert stream-safe",
+      "category": "stream"
+    },
+    {
+      "keys": "Caps+M",
+      "label": "Mark moment (clip target)",
+      "category": "stream"
+    },
+    {
+      "keys": "Caps+L",
+      "label": "Live captions toggle",
+      "category": "stream"
+    },
+    {
+      "keys": "Caps+R",
+      "label": "Swap to Reaction Cam",
+      "category": "scene"
+    },
+    {
+      "keys": "Caps+H",
+      "label": "Toggle this legend",
+      "category": "ui"
+    },
+    {
+      "keys": "\u2318+Q",
+      "label": "Quit OBS",
+      "category": "obs"
+    },
+    {
+      "keys": "\u2318+,",
+      "label": "OBS Settings",
+      "category": "obs"
+    },
+    {
+      "keys": "Caps+;",
+      "label": "Mech monitor \u2014 large (immersion break)",
+      "category": "mech"
+    },
+    {
+      "keys": "Caps+'",
+      "label": "Mech monitor \u2014 fullscreen (mech hidden)",
+      "category": "mech"
+    },
+    {
+      "keys": "Caps+D",
+      "label": "Mech mode \u2014 DECORATIVE (fake tactical)",
+      "category": "mech"
+    },
+    {
+      "keys": "Caps+V",
+      "label": "Mech mode \u2014 LIVE (Chrome window-capture)",
+      "category": "mech"
+    },
+    {
+      "keys": "Caps+J",
+      "label": "Mech monitor \u2014 small (fits frame)",
+      "category": "mech"
+    },
+    {
+      "keys": "Caps+K",
+      "label": "Mech monitor \u2014 medium",
+      "category": "mech"
+    },
+    {
+      "keys": "Caps+=",
+      "label": "View - CLOSE (zoom in)",
+      "category": "mech"
+    },
+    {
+      "keys": "Caps+-",
+      "label": "View - WIDE (zoom out)",
+      "category": "mech"
+    }
+  ]
+}

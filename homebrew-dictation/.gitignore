@@ -1,0 +1,16 @@
+# Whisper model is 685 MB — too big for git, re-download via install.sh
+models/*.bin
+
+# Personal transcript log — your data, not for sharing
+logs/transcripts.jsonl
+logs/dictate-debug.log
+
+# Symlink (recreated by install.sh)
+bin/whisper-cli
+
+# Temp files (live in /tmp anyway, but just in case)
+*.wav
+*.pid
+
+# macOS noise
+.DS_Store

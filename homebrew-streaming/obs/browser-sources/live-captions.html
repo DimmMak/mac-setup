@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Live Whisper Captions</title>
+<style>
+  /* Transparent background — overlay onto OBS scene */
+  body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: -apple-system, "SF Pro Display", "Helvetica Neue", sans-serif;
+    overflow: hidden;
+  }
+
+  #captions-container {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 80%;
+    text-align: center;
+  }
+
+  .caption {
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.85);
+    color: #ffffff;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 38px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fading {
+    animation: fadeOut 0.5s ease-in forwards;
+  }
+
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div id="captions-container">
+  <span id="caption" class="caption" style="display:none;"></span>
+</div>
+
+<script>
+/*
+ * Live Whisper Captions for OBS browser source.
+ *
+ * Reads from a local server endpoint that tails ~/voice/logs/transcripts.jsonl
+ * Each new transcript line → caption fades in at bottom of screen, holds 5 sec, fades out.
+ *
+ * Setup:
+ *   1. Run: ~/stream/scripts/captions-server.sh (a tiny Python http.server tailing the JSONL)
+ *   2. In OBS: Add Browser Source → URL: http://localhost:8765 → 1920x1080 → "Refresh on scene activate" OFF
+ *
+ * Why a server: OBS browser sources can't read local files directly (CORS).
+ * Solution: tiny HTTP server serves the latest line as JSON.
+ */
+
+const POLL_INTERVAL_MS = 500;        // how often to check for new captions
+const CAPTION_HOLD_MS  = 5000;       // how long to display each caption
+const CAPTION_FADE_MS  = 500;        // fade-out duration
+
+const captionEl  = document.getElementById('caption');
+let lastTimestamp = '';
+let hideTimer = null;
+let fadeTimer = null;
+
+async function pollCaptions() {
+  try {
+    const res = await fetch('/latest', { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data.text) return;
+
+    // Only show if it's a NEW caption (different timestamp)
+    if (data.ts === lastTimestamp) return;
+    lastTimestamp = data.ts;
+
+    showCaption(data.text);
+  } catch (e) {
+    // Server not up yet — ignore, will retry
+  }
+}
+
+function showCaption(text) {
+  // Cancel any pending hide/fade
+  clearTimeout(hideTimer);
+  clearTimeout(fadeTimer);
+
+  captionEl.classList.remove('fading');
+  captionEl.textContent = text;
+  captionEl.style.display = 'inline-block';
+
+  // After hold time, fade out
+  hideTimer = setTimeout(() => {
+    captionEl.classList.add('fading');
+    fadeTimer = setTimeout(() => {
+      captionEl.style.display = 'none';
+      captionEl.classList.remove('fading');
+    }, CAPTION_FADE_MS);
+  }, CAPTION_HOLD_MS);
+}
+
+// Start polling
+setInterval(pollCaptions, POLL_INTERVAL_MS);
+pollCaptions();
+</script>
+
+</body>
+</html>
