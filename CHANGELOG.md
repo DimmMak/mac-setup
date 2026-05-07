@@ -47,13 +47,27 @@ The standalone GitHub repos remain as frozen snapshots for history; no new commi
 3. **Bracketed paste mode artifact** — pasting commands from chat into Terminal can leave a stray `[` prefix (escape sequence remnant). Type commands manually to verify aliases.
 4. **Personal-setup poly-repo is the wrong default** — different design pressure than skill repos. Consolidate.
 
+### 🤖 Hammerspoon backfill
+
+Realized Hammerspoon was tracked as "Coming soon" in README despite running 4 active jobs. Documented all of them + snapshotted the live config:
+
+| Job | What it does |
+|---|---|
+| 🎤 Voice dictation | Mouse5 → F19 → whisper.cpp dictate, auto-paste transcript |
+| 🔴 Streaming controls | Pre/post-stream sanitize, mark moments, OBS scene swaps, live-captions toggle |
+| 🤖 Mech Cockpit overlay | OBS browser-source state controller (size, mode, view) |
+| 📺 Display-kick on wake | Auto-runs `system_profiler SPDisplaysDataType` on display wake (added today as a probabilistic guard for the HDMI handshake bug — may or may not be the actual trigger) |
+
+Snapshotted `~/.hammerspoon/init.lua` to `hammerspoon/init.lua` so a fresh Mac install can clone + restore. Removed Hammerspoon from "Coming soon" / "Roadmap" sections (it's been live for weeks, just undocumented here).
+
 ### Files updated
 
 - `CHANGELOG.md` — this entry
-- `README.md` — added `kickdisplay` to Tools section, added Subfolders map, kept Related repos for truly-external skills
+- `README.md` — added `kickdisplay` to Tools section, added Subfolders map, kept Related repos for truly-external skills, **added new "🤖 Hammerspoon Setup" section + Hammerspoon row in Tools Installed table**
 - `voiceink-setup/` — moved in (was top-level repo)
 - `homebrew-dictation/` — cloned in
 - `homebrew-streaming/` — cloned in
+- `hammerspoon/init.lua` — snapshot of `~/.hammerspoon/init.lua` (216 lines: voice dictation + streaming hotkeys + mech cockpit overlay + display-kick watcher)
 
 ---
 

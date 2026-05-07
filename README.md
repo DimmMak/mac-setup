@@ -96,6 +96,7 @@ Designed for AI Orchestrator + Data Analyst workflow. **Right hand never leaves 
 | **Shottr** | Screenshot with annotations (free CleanShot alternative) | [shottr.cc](https://shottr.cc) |
 | **Homebrew** | Mac package manager | [brew.sh](https://brew.sh) |
 | **GitHub CLI** | Push to GitHub from terminal | `brew install gh` |
+| **Hammerspoon** | Lua-based macOS automation (TCC-permissioned scripting, hotkeys, system event watchers — see [Hammerspoon Setup](#-hammerspoon-setup) below) | `brew install --cask hammerspoon` |
 
 ### Aliases
 
@@ -105,7 +106,6 @@ Designed for AI Orchestrator + Data Analyst workflow. **Right hand never leaves 
 
 ### Coming soon
 - [ ] BetterTouchTool
-- [ ] Hammerspoon
 - [ ] VS Code
 - [ ] Notion desktop app
 
@@ -254,6 +254,43 @@ Standalone rule. The mnemonic chain: ⌘V = paste, ⌘⇧V = paste-no-format, Ca
 
 ---
 
+## 🤖 Hammerspoon Setup
+
+Hammerspoon is the macOS automation app handling anything that requires proper TCC (Transparency Consent and Control) permissions — mic access, scripting, system event watchers. Karabiner does keyboard remapping; Hammerspoon does everything else.
+
+**Config:** `~/.hammerspoon/init.lua` (snapshot in [`hammerspoon/init.lua`](hammerspoon/init.lua))
+
+### What it currently does (4 jobs)
+
+| Job | What it does | Hotkey(s) |
+|---|---|---|
+| 🎤 **Voice dictation** | Mouse5 → F19 (via Karabiner) → Hammerspoon catches F19 → runs `~/voice/scripts/dictate.sh` (whisper.cpp). Auto-pastes transcript at cursor when done. | F19 (= Mouse5 via Karabiner) |
+| 🔴 **Streaming controls** | Pre/post-stream sanitization, mark moment for clipping, OBS scene swaps, toggle live captions. | Caps+B (broadcast on), Caps+N (normal off), Caps+M (mark moment), Caps+R (reaction cam scene), Caps+L (live captions toggle) |
+| 🤖 **Mech Cockpit overlay** | Writes `~/stream/data/cockpit-state.json` for the OBS browser-source overlay HTML to read live state — controls screen-share size, monitor mode (decorative/live), and view (close/wide/DJ booth). | Caps+J/K/;/' (size), Caps+D/V (mode), Caps+=/-/0 (view/scene) |
+| 📺 **Display-kick on wake** | Auto-runs `system_profiler SPDisplaysDataType` whenever displays wake from sleep — same as the `kickdisplay` alias. Recovers stuck external display handshake. *Added 2026-05-07.* | (automatic) |
+
+### Why Hammerspoon (vs Karabiner shell_command)
+
+Karabiner's `shell_command` runs through a daemon that lacks macOS mic-TCC entitlement (silent denial). Hammerspoon is a GUI app with proper TCC scope, so `sox` / `whisper-cpp` / etc. can capture mic when launched via `hs.task`. Same applies to any subprocess that needs system permissions.
+
+### Utility hotkey
+
+| Hotkey | Action |
+|---|---|
+| `Cmd+Alt+Ctrl+R` | Reload `init.lua` (after editing config) |
+
+### Install
+
+```bash
+brew install --cask hammerspoon
+# Then enable Accessibility access: System Settings → Privacy & Security → Accessibility → Hammerspoon
+# Copy snapshot:
+cp hammerspoon/init.lua ~/.hammerspoon/init.lua
+# Open Hammerspoon, click menu bar icon → Reload Config
+```
+
+---
+
 ## 🌀 Mac Workflow
 
 ### The feedback loop (debugging with Claude)
@@ -291,7 +328,6 @@ Standalone rule. The mnemonic chain: ⌘V = paste, ⌘⇧V = paste-no-format, Ca
 ## 🗺️ Roadmap
 
 - [ ] Add BetterTouchTool trackpad gestures
-- [ ] Add Hammerspoon scripts
 - [ ] Add VS Code extensions list
 - [ ] Add Python/data analyst environment setup (conda, jupyter)
 - [ ] Add dotfiles (.zshrc, .gitconfig)
